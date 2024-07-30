@@ -6,48 +6,40 @@ import os
 load_dotenv()
 
 app = FastHTML()
-
-count = 0
+setup_toasts(app)
 
 
 @app.get("/")
 def home():
-    return Title(f"Count Demo - running on {os.getenv('name')}"), Main(
-        H1("Count Demo"),
-        P(f"Using super secret {os.getenv('name')} secret: {os.getenv('secret')}"),
-        P(f"Count is set to {count}", id="count"),
-        Button(
-            "Increment", hx_post="/increment", hx_target="#count", hx_swap="innerHTML"
-        ),
-        Button(
-            "Decrement", hx_post="/decrement", hx_target="#count", hx_swap="innerHTML"
-        ),
-        Button("Reset", hx_post="/reset", hx_target="#count", hx_swap="innerHTML"),
+    return Title("Mushroom 🍄 Map"), Main(
+        H1("Mushroom 🍄 Map"), P("The map displays your mushroom observations."),
+        A("Click to add new observation", href="/new-observation"),
     )
 
 
-@app.post("/increment")
-def increment():
-    global count
-    ic(count)
-    count += 1
-    return f"Count is set to {count}"
+@app.get("/new-observation")
+def new_observation():
+    # return a Title and page for new observation that includes an image upload
+    return Title("New Observation"), Main(
+        H1("Add a New Observation"),
+        P("Please select the mushroom image for the observation. The photo should come with the GPS location where it has been taken in the metadata."),
+        Form(
+            Input(id="photo", type="file", name="photo"), Button("Submit", type="submit"),
+            action="/new-observation", method='POST', enctype="multipart/form-data", accept='image/*'
+        )
+    )
 
-
-@app.post("/decrement")
-def decrement():
-    global count
-    ic(count)
-    count -= 1
-    return f"Count is set to {count}"
-
-
-@app.post("/reset")
-def reset():
-    global count
-    ic(count)
-    count = 0
-    return f"Count is set to {count}"
+@app.post("/new-observation")
+async def new_observation_post(session, photo:str):
+    add_toast(session, "Photo upload successful", 'success')
+    photo_content = await photo.read()
+    with open('./static/photo-output.jpg', 'wb') as output:
+        output.write(photo_content)
+    ic(type(photo))
+    return Title("Successful Submission "), Main(
+        H1("Information about Uploaded Photo"),
+        Img(src="/photo-output.jpg")
+    )
 
 
 serve()
