@@ -1,12 +1,7 @@
 from fasthtml.common import *
 from icecream import ic
 from dotenv import load_dotenv
-
-load_dotenv()
-
-from fasthtml.common import *
-from icecream import ic
-from dotenv import load_dotenv
+import os
 
 load_dotenv()
 
