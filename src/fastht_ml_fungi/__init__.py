@@ -27,10 +27,9 @@ def home():
         Button(
             "Decrement", hx_post="/decrement", hx_target="#count", hx_swap="innerHTML"
         ),
-        Button(
-            "Reset", hx_post="/reset", hx_target="#count", hx_swap="innerHTML"
-        ),
+        Button("Reset", hx_post="/reset", hx_target="#count", hx_swap="innerHTML"),
     )
+
 
 @app.post("/increment")
 def increment():
@@ -39,12 +38,14 @@ def increment():
     count += 1
     return f"Count is set to {count}"
 
+
 @app.post("/decrement")
 def decrement():
     global count
     ic(count)
     count -= 1
     return f"Count is set to {count}"
+
 
 @app.post("/reset")
 def reset():
